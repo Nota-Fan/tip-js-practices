@@ -1,0 +1,9 @@
+{
+  "name": "practice-03",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node ./tools/server.js",
+    "check:service": "node ./checks/service.check.js"
+  }
+}
