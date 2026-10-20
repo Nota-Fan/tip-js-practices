@@ -1,12 +1,7 @@
 import { demoTasks, variantTasks, variantNumber } from "./data.js";
 import { taskSelectors } from "./task-selectors.js";
 import { taskView } from "./task-view.js";
-
-// Подтягиваем твой сервис из ПР2
-import { 
-  findTaskById, getPendingTasks, getTaskTitles, getTaskStats,
-  addTask, setTaskCompleted, renameTask, removeTask 
-} from "./task-service.js";
+import { getTaskStats, setTaskCompleted, removeTask } from "./task-service.js";
 
 console.log("=== ПРАКТИЧЕСКАЯ РАБОТА № 3 ===");
 console.log(`Успешный импорт данных. Номер варианта: ${variantNumber}\n`);
@@ -21,17 +16,18 @@ function updateUI() {
 
   taskView.renderTasks(filtered, taskSelectors.list);
   
-  // Рассчитываем статистику через функции твоего сервиса
-  const stats = {
-    total: currentTasks.length,
-    completed: currentTasks.filter(t => t.completed).length,
-    left: currentTasks.filter(t => !t.completed).length,
-    progress: currentTasks.length ? Math.round((currentTasks.filter(t => t.completed).length / currentTasks.length) * 100) : 0
-  };
-  taskView.renderSummary(stats, taskSelectors);
+  // Юзаем твой родной getTaskStats из сервиса
+  const stats = getTaskStats(currentTasks);
+  
+  // Переводим твои свойства в селекторы шаблона
+  taskView.renderSummary({
+    total: stats.total,
+    completed: stats.completed,
+    left: stats.pending, // в твоем сервисе это pending
+    progress: stats.progress
+  }, taskSelectors);
 }
 
-// Слушатель кликов по списку (Чекбоксы и Удаление)
 if (taskSelectors.list) {
   taskSelectors.list.addEventListener('click', (e) => {
     const li = e.target.closest('[data-task-id]');
@@ -39,16 +35,21 @@ if (taskSelectors.list) {
     const id = parseInt(li.dataset.taskId, 10);
 
     if (e.target.classList.contains('task-checkbox')) {
-      currentTasks = currentTasks.map(t => t.id === id ? { ...t, completed: e.target.checked } : t);
-      updateUI();
+      const result = setTaskCompleted(currentTasks, id, e.target.checked);
+      if (result.ok) {
+        currentTasks = result.tasks;
+        updateUI();
+      }
     }
 
     if (e.target.classList.contains('delete-btn')) {
-      currentTasks = currentTasks.filter(t => t.id !== id);
-      updateUI();
+      const result = removeTask(currentTasks, id);
+      if (result.ok) {
+        currentTasks = result.tasks;
+        updateUI();
+      }
     }
   });
 }
 
-// Инициализация
 updateUI();

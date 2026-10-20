@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Практика 3</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Список задач</h1>
+        <form class="task-form"><input type="text" class="task-input" placeholder="Новая задача"></form>
+        <ul class="task-list"></ul>
+        <div class="summary">
+            Всего: <span class="count-all">0</span> | Выполнено: <span class="count-done">0</span> | Осталось: <span class="count-left">0</span>
+            <div class="progress-container"><div class="progress-bar" style="width: 0%"></div></div>
+        </div>
+    </div>
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
